@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Order Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    button.selected { background: #cce5ff; }
+  </style>
+</head>
+
+<body>
+
+<form id="orderForm">
+
+  <h2>First name:</h2>
+  <input type="text" name="firstname" required>
+
+  <h2>Last name:</h2>
+  <input type="text" name="lastname" required>
+
+  <h2>Number of people (1–100):</h2>
+  <input type="number" name="people" min="1" max="100" required>
+
+  <h2>Booking time:</h2>
+  <label><input type="radio" name="time" value="09:00–13:00" required> 09:00–13:00</label><br>
+  <label><input type="radio" name="time" value="13:00–17:00"> 13:00–17:00</label><br>
+  <label><input type="radio" name="time" value="17:00–22:00"> 17:00–22:00</label>
+
+  <h2>Drinks</h2>
+  <button type="button" data-item="Tea">Tea</button>
+  <button type="button" data-item="Coffee">Coffee</button>
+  <button type="button" data-item="Hot Chocolate">Hot Chocolate</button>
+  <button type="button" data-item="Coke">Coke</button>
+  <button type="button" data-item="Diet Coke">Diet Coke</button>
+  <button type="button" data-item="Fanta">Fanta</button>
+  <button type="button" data-item="Water">Water</button>
+
+  <h2>Food</h2>
+  <button type="button" data-item="Fruit Salad">Fruit Salad</button>
+  <button type="button" data-item="Brownie">Brownie</button>
+
+  <h3>Sandwich:</h3>
+  <select name="sandwich">
+    <option value="Ham">Ham</option>
+    <option value="Cheese">Cheese</option>
+  </select>
+
+  <br><br>
+
+  <!-- SUBMIT & PRINT BUTTON -->
+  <button type="submit">Submit & Print</button>
+
+  <!-- RESET BUTTON -->
+  <button type="reset">Reset</button>
+
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("orderForm");
+
+  // Toggle buttons
+  document.querySelectorAll("button[data-item]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("selected");
+    });
+  });
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+
+    const first = form.firstname.value;
+    const last = form.lastname.value;
+    const people = form.people.value;
+    const time = form.time.value;
+    const sandwich = form.sandwich.value;
+
+    const items = [...document.querySelectorAll("button.selected")]
+      .map(b => b.dataset.item)
+      .join(", ") || "None";
+
+    const w = window.open("", "_blank");
+
+    if (!w) {
+      alert("Please allow popups to print.");
+      return;
+    }
+
+    w.document.write(`
+      <!doctype html>
+      <html>
+      <head>
+        <title>Order Summary</title>
+        <style>
+          body { font-family: Arial; padding: 20px; }
+        </style>
+      </head>
+      <body>
+        <h1>Order Summary</h1>
+        <p><strong>Name:</strong> ${first} ${last}</p>
+        <p><strong>People:</strong> ${people}</p>
+        <p><strong>Time:</strong> ${time}</p>
+        <p><strong>Items:</strong> ${items}</p>
+        <p><strong>Sandwich:</strong> ${sandwich}</p>
+
+        <script>
+          window.onload = () => {
+            window.print();
+          };
+        <\/script>
+      </body>
+      </html>
+    `);
+
+    w.document.close();
+  });
+});
+</script>
+
+</body>
+</html>
